@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_TRAINS 10
+
+struct Train {
+    int trainNumber;  // Added train number
+    char name[50];
+    char arrivalTime[10];
+    char departureTime[10];
+    int Platformnumber;
+};
+
+// Function prototypes
+void addTrain(struct Train trains[], int *numTrains);
+void displayStatus(struct Train trains[], int numTrains);
+void sortTrains(struct Train trains[], int numTrains);
+void searchTrain(struct Train trains[], int numTrains, int trainNumber);  // Added search function
+
+int main() {
+    struct Train trains[MAX_TRAINS];
+    int numTrains = 0;
+
+    printf("Train Arriving and Departure Status Program\n");
+    printf("----------------------------------------------\n");
+
+    int choice;
+    do {
+        printf("\n1. Add Train\n");
+        printf("2. Display Status\n");
+        printf("3. Sort Trains\n");
+        printf("4. Search for Train\n");  // Added option to search for a train
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addTrain(trains, &numTrains);
+                break;
+
+            case 2:
+                displayStatus(trains, numTrains);
+                break;
+
+            case 3:
+                if (numTrains > 1) {
+                    sortTrains(trains, numTrains);
+                    printf("\nTrains sorted by departure time.\n");
+                } else {
+                    printf("\nSorting requires at least two trains.\n");
+                }
+                break;
+
+            case 4: {
+                int trainNumber;
+                printf("Enter Train Number to search: ");
+                scanf("%d", &trainNumber);
+                searchTrain(trains, numTrains, trainNumber);
+                break;
+            }
+
+            case 5:
+                printf("\nExiting program. Goodbye!\n");
+                break;
+
+            default:
+                printf("\nInvalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
+void addTrain(struct Train trains[], int *numTrains) {
+    if (*numTrains < MAX_TRAINS) {
+        printf("\nEnter Train Details:\n");
+        printf("Train Number: ");
+        scanf("%d", &trains[*numTrains].trainNumber);  // Added train number input
+
+        printf("Train Name: ");
+        scanf(" %[^\n]", trains[*numTrains].name);
+
+        printf("Arrival Time: ");
+        scanf("%s", trains[*numTrains].arrivalTime);
+
+        printf("Departure Time: ");
+        scanf("%s", trains[*numTrains].departureTime);
+
+        printf("Platform number:");
+        scanf("%d", &trains[*numTrains].Platformnumber);
+
+        printf("\nTrain added successfully!\n");
+        (*numTrains)++;
+    } else {
+        printf("\nMaximum number of trains reached!\n");
+    }
+}
+
+void displayStatus(struct Train trains[], int numTrains) {
+    printf("\nTrain Number\tTrain\t\tArrival Time\tDeparture Time\tPlatform NO.\n");
+    printf("-------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < numTrains; ++i) {
+        printf("%-15d%-20s%-15s%-15s%-15d\n", trains[i].trainNumber, trains[i].name,
+               trains[i].arrivalTime, trains[i].departureTime,trains[i].Platformnumber);
+    }
+}
+
+void sortTrains(struct Train trains[], int numTrains) {
+    // Using a simple bubble sort for demonstration purposes
+    for (int i = 0; i < numTrains - 1; i++) {
+        for (int j = 0; j < numTrains - i - 1; j++) {
+            if (strcmp(trains[j].departureTime, trains[j + 1].departureTime) > 0) {
+                // Swap trains
+                struct Train temp = trains[j];
+                trains[j] = trains[j + 1];
+                trains[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void searchTrain(struct Train trains[], int numTrains, int trainNumber) {
+    for (int i = 0; i < numTrains; i++) {
+        if (trains[i].trainNumber == trainNumber) {
+            printf("Train found!\n");
+             printf("\nTrain Number\tTrain\t\tArrival Time\tDeparture Time\tPlatform NO.\n");
+             printf("-------------------------------------------------------------------------\n");
+            printf("%-15d%-20s%-15s%-15s%-15d\n", trains[i].trainNumber, trains[i].name,
+               trains[i].arrivalTime, trains[i].departureTime,trains[i].Platformnumber);
+            return;
+        }
+    }
+    printf("Train not found with number %d\n", trainNumber);
+}
